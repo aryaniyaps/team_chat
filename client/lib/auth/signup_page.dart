@@ -1,20 +1,21 @@
 import 'dart:async';
 
 import 'package:client/core/supabase.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   bool _isRedirecting = false;
@@ -56,8 +57,22 @@ class _SignInPageState extends State<SignInPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "let's sign in",
+                    "sign up",
                     style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  const SizedBox(height: 30),
+                  FormBuilderTextField(
+                    name: "full-name",
+                    validator: FormBuilderValidators.compose(
+                      [
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.maxLength(50),
+                      ],
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: "full name",
+                      hintText: "enter your full name",
+                    ),
                   ),
                   const SizedBox(
                     height: 30,
@@ -83,6 +98,7 @@ class _SignInPageState extends State<SignInPage> {
                     validator: FormBuilderValidators.compose(
                       [
                         FormBuilderValidators.required(),
+                        FormBuilderValidators.minLength(12),
                       ],
                     ),
                     decoration: const InputDecoration(
@@ -99,10 +115,25 @@ class _SignInPageState extends State<SignInPage> {
 
                       if (state.saveAndValidate()) {
                         try {
-                          await supabase.auth.signInWithPassword(
+                          await supabase.auth.signUp(
                             password: state.value["password"],
                             email: state.value["email"],
+                            data: {
+                              "full_name": state.value["full-name"],
+                            },
+                            emailRedirectTo: kIsWeb
+                                ? null
+                                : 'io.supabase.flutterquickstart://login-callback/',
                           );
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Check your inbox to confirm your email",
+                                ),
+                              ),
+                            );
+                          }
                         } on AuthException catch (error) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -119,16 +150,21 @@ class _SignInPageState extends State<SignInPage> {
                       }
                     },
                     child: const Text(
-                      "sign in",
+                      "create account",
                     ),
                   ),
                   const SizedBox(
                     height: 50,
                   ),
                   GestureDetector(
-                    child: const Text("don't have an account?"),
+                    child: Text(
+                      "already have an account?",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                     onTap: () {
-                      context.go("/signup");
+                      context.go("/signin");
                     },
                   ),
                 ],

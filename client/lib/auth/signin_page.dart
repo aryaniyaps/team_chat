@@ -1,21 +1,20 @@
 import 'dart:async';
 
 import 'package:client/core/supabase.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   bool _isRedirecting = false;
@@ -57,7 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "let's sign up",
+                    "sign in",
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
                   const SizedBox(
@@ -84,7 +83,6 @@ class _SignUpPageState extends State<SignUpPage> {
                     validator: FormBuilderValidators.compose(
                       [
                         FormBuilderValidators.required(),
-                        FormBuilderValidators.minLength(12),
                       ],
                     ),
                     decoration: const InputDecoration(
@@ -101,22 +99,10 @@ class _SignUpPageState extends State<SignUpPage> {
 
                       if (state.saveAndValidate()) {
                         try {
-                          await supabase.auth.signUp(
+                          await supabase.auth.signInWithPassword(
                             password: state.value["password"],
                             email: state.value["email"],
-                            emailRedirectTo: kIsWeb
-                                ? null
-                                : 'io.supabase.flutterquickstart://login-callback/',
                           );
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  "Check your inbox to confirm your email",
-                                ),
-                              ),
-                            );
-                          }
                         } on AuthException catch (error) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -133,16 +119,21 @@ class _SignUpPageState extends State<SignUpPage> {
                       }
                     },
                     child: const Text(
-                      "create account",
+                      "sign in",
                     ),
                   ),
                   const SizedBox(
                     height: 50,
                   ),
                   GestureDetector(
-                    child: const Text("already have an account?"),
+                    child: Text(
+                      "don't have an account?",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                     onTap: () {
-                      context.go("/signin");
+                      context.go("/signup");
                     },
                   ),
                 ],

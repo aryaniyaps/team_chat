@@ -1,6 +1,6 @@
+import 'package:client/auth/signin_page.dart';
+import 'package:client/auth/signup_page.dart';
 import 'package:client/home/home_page.dart';
-import 'package:client/signin/signin_page.dart';
-import 'package:client/signup/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Flutter Demo',
+      title: 'Team Chat',
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
       theme: ThemeData(
