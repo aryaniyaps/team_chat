@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:client/core/supabase.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,31 +15,6 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormBuilderState>();
-
-  bool _isRedirecting = false;
-
-  late final StreamSubscription<AuthState> _authStateSubscription;
-
-  @override
-  void initState() {
-    _authStateSubscription = supabase.auth.onAuthStateChange.listen(
-      (event) {
-        if (_isRedirecting) return;
-        final session = event.session;
-        if (session != null) {
-          _isRedirecting = true;
-          context.go("/");
-        }
-      },
-    );
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _authStateSubscription.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +78,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       labelText: "password",
                       hintText: "enter your password",
                     ),
+                    obscureText: true,
                   ),
                   const SizedBox(
                     height: 30,
@@ -157,11 +131,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     height: 50,
                   ),
                   GestureDetector(
-                    child: Text(
+                    child: const Text(
                       "already have an account?",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
                     ),
                     onTap: () {
                       context.go("/signin");

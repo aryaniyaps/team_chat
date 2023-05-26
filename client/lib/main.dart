@@ -1,6 +1,8 @@
 import 'package:client/auth/signin_page.dart';
 import 'package:client/auth/signup_page.dart';
+import 'package:client/core/supabase.dart';
 import 'package:client/home/home_page.dart';
+import 'package:client/splash/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,18 +17,31 @@ void main() async {
   );
 
   runApp(
-    ProviderScope(
+    const ProviderScope(
       child: MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final _router = GoRouter(
-    initialLocation: "/signin",
+    initialLocation: "/splash",
     routes: [
+      GoRoute(
+        path: "/splash",
+        builder: (context, state) {
+          return SplashPage(
+            key: state.pageKey,
+          );
+        },
+      ),
       GoRoute(
         path: "/",
         builder: (context, state) {
@@ -53,6 +68,30 @@ class MyApp extends StatelessWidget {
       ),
     ],
   );
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// Listen for authentication events and redirect to
+    /// correct page when key events are detected.
+    supabase.auth.onAuthStateChange.listen(
+      (data) {
+        switch (data.event) {
+          case AuthChangeEvent.signedIn:
+            context.replace("/");
+            break;
+
+          case AuthChangeEvent.signedOut:
+            context.replace("/signin");
+            break;
+
+          default:
+            break;
+        }
+      },
+    );
+  }
 
   // This widget is the root of your application.
   @override
