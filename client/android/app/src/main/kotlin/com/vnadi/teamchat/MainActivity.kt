@@ -1,4 +1,4 @@
-package com.example.client
+package com.vnadi.teamchat
 
 import io.flutter.embedding.android.FlutterActivity
 
