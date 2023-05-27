@@ -55,7 +55,7 @@
 		<string>Editor</string>
 		<key>CFBundleURLSchemes</key>
 		<array>
-			<string>io.supabase.flutterquickstart</string>
+			<string>com.vnadi.teamchat</string>
 		</array>
 		</dict>
 	</array>

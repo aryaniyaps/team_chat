@@ -41,13 +41,7 @@ class _SplashPageState extends State<SplashPage> {
     return const SafeArea(
       child: Scaffold(
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(),
-            ],
-          ),
+          child: CircularProgressIndicator(),
         ),
       ),
     );

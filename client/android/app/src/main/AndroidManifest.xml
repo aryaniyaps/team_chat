@@ -1,6 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.vnadi.teamchat">
     <application
-        android:label="client"
+        android:label="teamchat"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -30,8 +30,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with YOUR_SCHEME://YOUR_HOST -->
                 <data
-                android:scheme="io.supabase.flutterquickstart"
-                android:host="login-callback" />
+                android:scheme="com.vnadi.teamchat"
+                android:host="login" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

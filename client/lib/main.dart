@@ -1,3 +1,5 @@
+import 'package:client/auth/recover_password_page.dart';
+import 'package:client/auth/reset_password_page.dart';
 import 'package:client/auth/signin_page.dart';
 import 'package:client/auth/signup_page.dart';
 import 'package:client/core/supabase.dart';
@@ -12,9 +14,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: const String.fromEnvironment("SUPABASE_URL"),
-    anonKey: const String.fromEnvironment("SUPABASE_ANON_KEY"),
-  );
+      url: const String.fromEnvironment("SUPABASE_URL"),
+      anonKey: const String.fromEnvironment("SUPABASE_ANON_KEY"),
+      debug: true);
 
   runApp(
     const ProviderScope(
@@ -66,6 +68,22 @@ class _MyAppState extends State<MyApp> {
           );
         },
       ),
+      GoRoute(
+        path: "/reset-password",
+        builder: (context, state) {
+          return ResetPasswordPage(
+            key: state.pageKey,
+          );
+        },
+      ),
+      GoRoute(
+        path: "/recover-password",
+        builder: (context, state) {
+          return RecoverPasswordPage(
+            key: state.pageKey,
+          );
+        },
+      )
     ],
   );
 
@@ -75,15 +93,22 @@ class _MyAppState extends State<MyApp> {
 
     /// Listen for authentication events and redirect to
     /// correct page when key events are detected.
+    ///
+    /// note: widget might not be mounted here, so avoid
+    /// use of context. use router directly.
     supabase.auth.onAuthStateChange.listen(
       (data) {
         switch (data.event) {
           case AuthChangeEvent.signedIn:
-            context.replace("/");
+            _router.replace("/");
             break;
 
           case AuthChangeEvent.signedOut:
-            context.replace("/signin");
+            _router.replace("/signin");
+            break;
+
+          case AuthChangeEvent.passwordRecovery:
+            _router.replace("/recover-password");
             break;
 
           default:
@@ -100,7 +125,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Team Chat',
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
-      theme: ThemeData(
+      theme: ThemeData.dark(
         // This is the theme of your application.
         //
         // TRY THIS: Try running your application with "flutter run". You'll see
@@ -116,7 +141,6 @@ class _MyAppState extends State<MyApp> {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
     );

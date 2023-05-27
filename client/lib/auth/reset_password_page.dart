@@ -1,23 +1,23 @@
 import 'package:client/core/supabase.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+class ResetPasswordPage extends StatefulWidget {
+  const ResetPasswordPage({super.key});
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   bool _isLoading = false;
 
-  Future<void> signin() async {
+  Future<void> resetPassword() async {
     setState(() {
       _isLoading = true;
     });
@@ -26,17 +26,26 @@ class _SignInPageState extends State<SignInPage> {
 
     if (state.saveAndValidate()) {
       try {
-        await supabase.auth.signInWithPassword(
-          password: state.value["password"],
-          email: state.value["email"],
+        await supabase.auth.resetPasswordForEmail(
+          state.value["email"],
+          redirectTo: kIsWeb ? null : "com.vnadi.teamchat://login",
         );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                "please check your inbox for a password reset email",
+              ),
+            ),
+          );
+        }
       } on AuthException catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error.message),
           ),
         );
-      } catch (_) {
+      } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("unexpected error occured"),
@@ -53,8 +62,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("sign in"),
-        centerTitle: true,
+        title: const Text("reset password"),
       ),
       resizeToAvoidBottomInset: true,
       body: Center(
@@ -66,13 +74,6 @@ class _SignInPageState extends State<SignInPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "team chat",
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
                   FormBuilderTextField(
                     name: "email",
                     validator: FormBuilderValidators.compose(
@@ -89,45 +90,11 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(
                     height: 30,
                   ),
-                  FormBuilderTextField(
-                    name: "password",
-                    validator: FormBuilderValidators.compose(
-                      [
-                        FormBuilderValidators.required(),
-                      ],
-                    ),
-                    decoration: const InputDecoration(
-                      labelText: "password",
-                      hintText: "enter your password",
-                    ),
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 30),
-                  GestureDetector(
-                    child: const Text("forgot password?"),
-                    onTap: () {
-                      context.push("/reset-password");
-                    },
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
                   ElevatedButton(
-                    onPressed: _isLoading ? null : signin,
+                    onPressed: _isLoading ? null : resetPassword,
                     child: const Text(
-                      "sign in",
+                      "reset password",
                     ),
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  GestureDetector(
-                    child: const Text(
-                      "don't have an account?",
-                    ),
-                    onTap: () {
-                      context.go("/signup");
-                    },
                   ),
                 ],
               ),
