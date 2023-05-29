@@ -14,9 +14,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-      url: const String.fromEnvironment("SUPABASE_URL"),
-      anonKey: const String.fromEnvironment("SUPABASE_ANON_KEY"),
-      debug: true);
+    url: const String.fromEnvironment("SUPABASE_URL"),
+    anonKey: const String.fromEnvironment("SUPABASE_ANON_KEY"),
+    debug: true,
+  );
 
   runApp(
     const ProviderScope(
@@ -33,7 +34,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _router = GoRouter(
+  final router = GoRouter(
     initialLocation: "/splash",
     routes: [
       GoRoute(
@@ -79,7 +80,7 @@ class _MyAppState extends State<MyApp> {
       GoRoute(
         path: "/recover-password",
         builder: (context, state) {
-          return RecoverPasswordPage(
+          return UpdatePasswordPage(
             key: state.pageKey,
           );
         },
@@ -100,15 +101,15 @@ class _MyAppState extends State<MyApp> {
       (data) {
         switch (data.event) {
           case AuthChangeEvent.signedIn:
-            _router.replace("/");
+            router.replace("/");
             break;
 
           case AuthChangeEvent.signedOut:
-            _router.replace("/signin");
+            router.replace("/signin");
             break;
 
           case AuthChangeEvent.passwordRecovery:
-            _router.replace("/recover-password");
+            router.replace("/recover-password");
             break;
 
           default:
@@ -122,9 +123,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Team Chat',
+      title: 'team chat',
       debugShowCheckedModeBanner: false,
-      routerConfig: _router,
+      routerConfig: router,
       theme: ThemeData.dark(
         // This is the theme of your application.
         //

@@ -1,22 +1,67 @@
+import 'package:client/core/supabase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class RecoverPasswordPage extends StatefulWidget {
-  const RecoverPasswordPage({super.key});
+class UpdatePasswordPage extends StatefulWidget {
+  const UpdatePasswordPage({super.key});
 
   @override
-  State<RecoverPasswordPage> createState() => _RecoverPasswordPageState();
+  State<UpdatePasswordPage> createState() => _UpdatePasswordPageState();
 }
 
-class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
+class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   final _formKey = GlobalKey<FormBuilderState>();
+
+  bool _isLoading = false;
+
+  Future<void> recoverPassword() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final state = _formKey.currentState!;
+
+    if (state.saveAndValidate()) {
+      try {
+        await supabase.auth.updateUser(
+          UserAttributes(
+            password: state.value["password"],
+          ),
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                "successfully updated password",
+              ),
+            ),
+          );
+        }
+      } on AuthException catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.message),
+          ),
+        );
+      } catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("unexpected error occured"),
+          ),
+        );
+      }
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("recover password"),
+        title: const Text("update password"),
         centerTitle: true,
       ),
       resizeToAvoidBottomInset: true,
@@ -30,7 +75,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   FormBuilderTextField(
-                    name: "email",
+                    name: "password",
                     validator: FormBuilderValidators.compose(
                       [
                         FormBuilderValidators.required(),
@@ -45,10 +90,10 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
                   const SizedBox(
                     height: 30,
                   ),
-                  const ElevatedButton(
-                    onPressed: null,
-                    child: Text(
-                      "recover password",
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : recoverPassword,
+                    child: const Text(
+                      "update password",
                     ),
                   ),
                 ],
