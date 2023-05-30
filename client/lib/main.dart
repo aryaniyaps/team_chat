@@ -6,6 +6,7 @@ import 'package:client/home/home_page.dart';
 import 'package:client/splash/splash_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -92,21 +93,43 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    setupAuth();
+    setupDynamiclinks();
+  }
+
+  Future<void> setupDynamiclinks() async {
+    final initialLink = await FirebaseDynamicLinks.instance.getInitialLink();
+
+    if (initialLink != null) {
+      final deepLink = initialLink.link;
+      router.pushNamed(deepLink.path);
+    }
+
+    FirebaseDynamicLinks.instance.onLink.listen(
+      (pendingDynamicLinkData) {
+        final deepLink = pendingDynamicLinkData.link;
+        router.pushNamed(deepLink.path);
+      },
+    );
+  }
+
+  void setupAuth() {
     /// Listen for authentication events and redirect to
     /// correct page when key events are detected.
     ///
     /// note: widget might not be mounted here, so avoid
     /// use of context. use router directly.
-
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        // user signed out
-        router.replace("/signin");
-      } else {
-        // user signed in
-        router.replace("/");
-      }
-    });
+    FirebaseAuth.instance.authStateChanges().listen(
+      (User? user) {
+        if (user == null) {
+          // user signed out
+          router.replace("/signin");
+        } else {
+          // user signed in
+          router.replace("/");
+        }
+      },
+    );
   }
 
   // This widget is the root of your application.
@@ -117,21 +140,6 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       routerConfig: router,
       theme: ThemeData.dark(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         useMaterial3: true,
       ),
     );

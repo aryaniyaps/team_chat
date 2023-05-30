@@ -31,6 +31,7 @@ class _SignUpPageState extends State<SignUpPage> {
           email: state.value["email"],
           password: state.value["password"],
         );
+        await FirebaseAuth.instance.currentUser!.sendEmailVerification();
       } on FirebaseAuthException catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

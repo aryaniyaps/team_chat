@@ -26,9 +26,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       try {
         await FirebaseAuth.instance.sendPasswordResetEmail(
           email: state.value["email"],
-          actionCodeSettings: ActionCodeSettings(
-            url: "com.vnadi.teamchat://login",
-          ),
         );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
