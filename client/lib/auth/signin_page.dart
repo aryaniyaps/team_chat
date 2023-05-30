@@ -1,9 +1,8 @@
-import 'package:client/core/supabase.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -26,15 +25,9 @@ class _SignInPageState extends State<SignInPage> {
 
     if (state.saveAndValidate()) {
       try {
-        await supabase.auth.signInWithPassword(
-          password: state.value["password"],
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: state.value["email"],
-        );
-      } on AuthException catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.message),
-          ),
+          password: state.value["password"],
         );
       } catch (_) {
         ScaffoldMessenger.of(context).showSnackBar(

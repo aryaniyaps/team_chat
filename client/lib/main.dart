@@ -2,21 +2,21 @@ import 'package:client/auth/recover_password_page.dart';
 import 'package:client/auth/reset_password_page.dart';
 import 'package:client/auth/signin_page.dart';
 import 'package:client/auth/signup_page.dart';
-import 'package:client/core/supabase.dart';
 import 'package:client/home/home_page.dart';
 import 'package:client/splash/splash_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Supabase.initialize(
-    url: const String.fromEnvironment("SUPABASE_URL"),
-    anonKey: const String.fromEnvironment("SUPABASE_ANON_KEY"),
-    debug: true,
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
   runApp(
@@ -97,26 +97,16 @@ class _MyAppState extends State<MyApp> {
     ///
     /// note: widget might not be mounted here, so avoid
     /// use of context. use router directly.
-    supabase.auth.onAuthStateChange.listen(
-      (data) {
-        switch (data.event) {
-          case AuthChangeEvent.signedIn:
-            router.replace("/");
-            break;
 
-          case AuthChangeEvent.signedOut:
-            router.replace("/signin");
-            break;
-
-          case AuthChangeEvent.passwordRecovery:
-            router.replace("/recover-password");
-            break;
-
-          default:
-            break;
-        }
-      },
-    );
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        // user signed out
+        router.replace("/signin");
+      } else {
+        // user signed in
+        router.replace("/");
+      }
+    });
   }
 
   // This widget is the root of your application.

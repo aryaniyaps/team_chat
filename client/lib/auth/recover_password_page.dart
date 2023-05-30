@@ -1,8 +1,6 @@
-import 'package:client/core/supabase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UpdatePasswordPage extends StatefulWidget {
   const UpdatePasswordPage({super.key});
@@ -24,11 +22,11 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
     if (state.saveAndValidate()) {
       try {
-        await supabase.auth.updateUser(
-          UserAttributes(
-            password: state.value["password"],
-          ),
-        );
+        // await supabase.auth.updateUser(
+        //   UserAttributes(
+        //     password: state.value["password"],
+        //   ),
+        // );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -38,12 +36,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             ),
           );
         }
-      } on AuthException catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.message),
-          ),
-        );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

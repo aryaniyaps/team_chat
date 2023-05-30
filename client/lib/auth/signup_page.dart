@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:client/core/supabase.dart';
-import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -20,35 +18,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   bool _isLoading = false;
 
-  late final StreamSubscription<AuthState> _authSubscription;
-
-  @override
-  void initState() {
-    super.initState();
-
-    bool hasNavigated = false;
-
-    // redirect when user clicks on confirmation link
-    _authSubscription = supabase.auth.onAuthStateChange.listen(
-      (data) {
-        final session = data.session;
-
-        if (session != null && !hasNavigated) {
-          hasNavigated = true;
-          context.replace("/");
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    // dispose subscription
-    _authSubscription.cancel();
-  }
-
   Future<void> signup() async {
     setState(() {
       _isLoading = true;
@@ -58,25 +27,9 @@ class _SignUpPageState extends State<SignUpPage> {
 
     if (state.saveAndValidate()) {
       try {
-        final response = await supabase.auth.signUp(
-          password: state.value["password"],
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: state.value["email"],
-          emailRedirectTo: kIsWeb ? null : "com.vnadi.teamchat://login",
-        );
-        if (mounted && response.user?.emailConfirmedAt == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                "please check your inbox for a confirmation email",
-              ),
-            ),
-          );
-        }
-      } on AuthException catch (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.message),
-          ),
+          password: state.value["password"],
         );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(

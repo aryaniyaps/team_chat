@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -18,22 +16,22 @@ class _SplashPageState extends State<SplashPage> {
     ///
     /// Wait a minium `delayed` time in any case
     /// to avoid flashing screen.
-    Future.wait([
-      SupabaseAuth.instance.initialSession,
-      Future.delayed(
-        const Duration(milliseconds: 2000),
-      ),
-    ]).then((responseList) {
-      final session = responseList.first as Session?;
-      // Redirect to either home or sign in routes based on current session.
-      if (session != null) {
-        context.replace("/");
-      } else {
-        context.replace("/signin");
-      }
-    }).catchError((_) {
-      context.replace("/signin");
-    });
+    // Future.wait([
+    //   SupabaseAuth.instance.initialSession,
+    //   Future.delayed(
+    //     const Duration(milliseconds: 2000),
+    //   ),
+    // ]).then((responseList) {
+    //   final session = responseList.first as Session?;
+    //   // Redirect to either home or sign in routes based on current session.
+    //   if (session != null) {
+    //     context.replace("/");
+    //   } else {
+    //     context.replace("/signin");
+    //   }
+    // }).catchError((_) {
+    //   context.replace("/signin");
+    // });
   }
 
   @override
