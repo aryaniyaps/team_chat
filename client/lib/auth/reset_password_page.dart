@@ -39,6 +39,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             ),
           );
         }
+      } on FirebaseAuthException catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.message.toString()),
+          ),
+        );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

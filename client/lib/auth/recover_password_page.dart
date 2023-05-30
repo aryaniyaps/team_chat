@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -36,6 +37,12 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             ),
           );
         }
+      } on FirebaseAuthException catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.message.toString()),
+          ),
+        );
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

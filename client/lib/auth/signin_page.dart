@@ -29,6 +29,12 @@ class _SignInPageState extends State<SignInPage> {
           email: state.value["email"],
           password: state.value["password"],
         );
+      } on FirebaseAuthException catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.message.toString()),
+          ),
+        );
       } catch (_) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
