@@ -2,7 +2,7 @@ repo_name: aryaniyaps/team_chat
 report_id: 388d698d67a378c24f27cb59ff65b952
 version: 0.1
 repo_type: Public
-timestamp: '2024-01-20T08:11:56+00:00'
+timestamp: '2024-02-29T19:31:22+00:00'
 requested_by: aryaniyaps
 provider: github
 branch: main
@@ -73,7 +73,7 @@ tools:
   detection_source_url: https://github.com/aryaniyaps/team_chat
   detection_source: Repo Metadata
 - name: Swift
-  description: 'An innovative new programming language for Cocoa and Cocoa Touch. '
+  description: An innovative new programming language for Cocoa and Cocoa Touch.
   website_url: https://developer.apple.com/swift/
   license: Apache-2.0
   open_source: true
@@ -111,7 +111,7 @@ tools:
   last_updated_by: Aryan Iyappan
   last_updated_on: 2023-05-25 12:58:09.000000000 Z
 - name: CMake
-  description: 'An open-source system that manages the build process '
+  description: An open-source system that manages the build process
   website_url: http://www.cmake.org/
   open_source: false
   hosted_saas: false
